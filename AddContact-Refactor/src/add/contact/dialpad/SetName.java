@@ -37,7 +37,7 @@ public class SetName extends Activity implements OnClickListener{
         /* attempt to find and set the users name */
         EditText name_input = (EditText) this.findViewById(R.id.nameInput);
         String name_attempt = Util.getUserName(getContentResolver());
-        if( !name_attempt.equals("") )
+        if( name_attempt != null && !name_attempt.equals("") )
         {
         	TextView found_name_msg = (TextView) this.findViewById(R.id.found_name_msg);
         	found_name_msg.setText(getString(R.string.found_name ));
