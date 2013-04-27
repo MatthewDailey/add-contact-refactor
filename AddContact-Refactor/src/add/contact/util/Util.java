@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -14,6 +15,7 @@ import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.CommonDataKinds.GroupMembership;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -194,9 +196,6 @@ public class Util
         	}
         	else
         	{
-        		acct_name = null;
-        		acct_type = null;
-        		group_id = null;
         		visible = "0";
         	}
         }
@@ -228,69 +227,72 @@ public class Util
     	String acct_name = acct_info[1]; 
     	String acct_type = acct_info[2];
     	
-    	/* check to make sure such a group exists, if not we are S.O.L. 
-    	 * so alert the user.*/
-    	if(group_id == null || acct_name == null || acct_type == null)
+    	
+    	
+		/* create a batch operation to perform on the database */
+        ArrayList<ContentProviderOperation> ops = 
+        		new ArrayList<ContentProviderOperation>();
+        
+        /* create contact with target account info */
+        ops.add(ContentProviderOperation.newInsert(
+        		ContactsContract.RawContacts.CONTENT_URI)
+                .withValue(ContactsContract.RawContacts.
+                		ACCOUNT_TYPE, acct_type)
+                .withValue(ContactsContract.RawContacts.
+                		ACCOUNT_NAME, acct_name)
+                .build());
+        
+        /* add the contact name */
+        ops.add(ContentProviderOperation.newInsert(ContactsContract.
+        		Data.CONTENT_URI)
+                .withValueBackReference(Data.RAW_CONTACT_ID, 0)
+                .withValue(ContactsContract.Data.MIMETYPE,
+                        ContactsContract.CommonDataKinds.StructuredName.
+                        CONTENT_ITEM_TYPE)
+                .withValue(ContactsContract.CommonDataKinds.StructuredName.
+                		DISPLAY_NAME, name)
+                .build());
+        /* add the contact number */
+        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.
+        		CONTENT_URI)
+                .withValueBackReference(Data.RAW_CONTACT_ID, 0)
+                .withValue(ContactsContract.Data.MIMETYPE,
+                	ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, 
+                		phone)
+                .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, 
+                		ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
+                .build());
+        
+    	/* check to make sure such a group exists so we can add to a group. */
+    	if(group_id != null )
     	{
-    		toastMsg(a, "Unable to find valid contact group. " +
-    				"This function may not work for you.");
+            /* add teh contact group */
+            ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.
+            		CONTENT_URI)
+                    .withValueBackReference(Data.RAW_CONTACT_ID, 0)
+                    .withValue(GroupMembership.GROUP_SOURCE_ID, group_id)
+                    .withValue(GroupMembership.MIMETYPE, 
+                    		GroupMembership.CONTENT_ITEM_TYPE)
+                    .build());
     	}
-    	else 
-    	{
-    		/* create a batch operation to perform on the database */
-	        ArrayList<ContentProviderOperation> ops = 
-	        		new ArrayList<ContentProviderOperation>();
-	        /* create contact with target account info */
-	        ops.add(ContentProviderOperation.newInsert(
-	        		ContactsContract.RawContacts.CONTENT_URI)
-	                .withValue(ContactsContract.RawContacts.
-	                		ACCOUNT_TYPE, acct_type)
-	                .withValue(ContactsContract.RawContacts.
-	                		ACCOUNT_NAME, acct_name)
-	                .build());
-	        /* add the contact name */
-	        ops.add(ContentProviderOperation.newInsert(ContactsContract.
-	        		Data.CONTENT_URI)
-	                .withValueBackReference(Data.RAW_CONTACT_ID, 0)
-	                .withValue(ContactsContract.Data.MIMETYPE,
-	                        ContactsContract.CommonDataKinds.StructuredName.
-	                        CONTENT_ITEM_TYPE)
-	                .withValue(ContactsContract.CommonDataKinds.StructuredName.
-	                		DISPLAY_NAME, name)
-	                .build());
-	        /* add the contact number */
-	        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.
-	        		CONTENT_URI)
-	                .withValueBackReference(Data.RAW_CONTACT_ID, 0)
-	                .withValue(ContactsContract.Data.MIMETYPE,
-	                	ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-	                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, 
-	                		phone)
-	                .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, 
-	                		ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
-	                .build());
-	        /* add teh contact group */
-	        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.
-	        		CONTENT_URI)
-	                .withValueBackReference(Data.RAW_CONTACT_ID, 0)
-	                .withValue(GroupMembership.GROUP_SOURCE_ID, group_id)
-	                .withValue(GroupMembership.MIMETYPE, 
-	                		GroupMembership.CONTENT_ITEM_TYPE)
-	                .build());
-	
-	        /* apply the the set of operations defined above */
-	        try 
-	        {
-	        	a.getContentResolver().applyBatch(
-	        			ContactsContract.AUTHORITY, ops);
-	        	toastMsg(a, "Added contact: "+name);
-	        } 
-	        catch (Exception e) 
-	        {
-	            // Display warning
-	        	toastMsg(a, "Failed to create new contact.");
-	        }
-    	}
+    	
+        try 
+        {
+        	ContentProviderResult[] results = a.getContentResolver().applyBatch(
+        			ContactsContract.AUTHORITY, ops);
+        	Log.i("Writign Contact", "Results len: " + results.length + " ops len: " + ops.size());
+        	for(ContentProviderResult cpr : results ){
+        		Log.i("Writing Contact", cpr.toString());
+        	}
+        	toastMsg(a, "Added contact: "+name);
+        } 
+        catch (Exception e) 
+        {
+            // Display warning
+        	Log.e("ADDING CONTACT", "Failed to create contact!", e);
+        	toastMsg(a, "Failed to create new contact.");
+        }
     }
     
     /**

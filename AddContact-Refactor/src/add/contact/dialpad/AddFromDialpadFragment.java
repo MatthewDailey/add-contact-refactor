@@ -1,5 +1,7 @@
 package add.contact.dialpad;
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+
 import add.contact.R;
 import add.contact.util.Const;
 import add.contact.util.Util;
@@ -85,10 +87,17 @@ public class AddFromDialpadFragment extends Fragment implements OnClickListener 
 		EditText phoneText = (EditText) getActivity().findViewById(R.id.numberInput);
 		String phone = phoneText.getText().toString();
     	
-		// check if the phone number is 10 digit int 
-    	if( !Util.isInteger(phone) ) {
+		// check if isInteger(phone)the phone number is 10 digit int 
+		PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+		boolean isPhoneNum = false;
+		for( int i = 0; i < Const.COUNTRIES.length && !isPhoneNum; i++ )
+		{
+			isPhoneNum |= phoneUtil.isPossibleNumber(phone, Const.COUNTRIES[i]);
+		}
+		if( !isPhoneNum ) 
+		{
     		Util.toastMsg(getActivity(), 
-    				"Check that phone number is an integer.");
+    				"Check that phone number is valid.");
     		return;
     	}
     	
@@ -107,15 +116,15 @@ public class AddFromDialpadFragment extends Fragment implements OnClickListener 
 		    		Log.e("ERROR", "Failed to send text to new contact.",e);
 		    	}
     		}
+    		
+        	// close activity
+        	getActivity().finish();
     	} catch(Exception e) {
     		Util.toastMsg(getActivity(), 
     				"Failed to add contact.");
     		Log.e("ERROR", "Failed to add contact", e);
     		
     	}
-    	
-    	// close activity
-    	getActivity().finish();
 	}
 	
 	/**
