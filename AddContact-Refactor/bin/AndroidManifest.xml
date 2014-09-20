@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="add.contact"
-    android:versionCode="16"
-    android:versionName="1.6" >
+    android:versionCode="19"
+    android:versionName="1.9" >
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_SMS" />
@@ -20,7 +20,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/MyTheme" >
         <activity
             android:name="add.contact.main.MainActivity"
             android:label="@string/app_name" >

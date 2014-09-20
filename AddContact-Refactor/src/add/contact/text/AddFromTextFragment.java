@@ -2,10 +2,13 @@ package add.contact.text;
 
 import java.util.ArrayList;
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import add.contact.text.LoadTexts;
+import add.contact.util.Const;
 import add.contact.util.Util;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -32,20 +35,22 @@ import android.widget.ListView;
 public class AddFromTextFragment extends ListFragment implements
 		LoaderCallbacks<ArrayList<TextInfo>> {
 	
-	CustomTextBaseAdapter adapter;
+	TextAdapter adapter;
 	
 	@Override
 	public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated(savedInstanceState);
-
+		// set the adapter
+		adapter = new TextAdapter(getActivity());
+		setListAdapter( adapter );
+		
 		// show loading animation
 		setListShown(false);
-		
-		// set the adapter
-		adapter = new CustomTextBaseAdapter(getActivity());
-		setListAdapter( adapter );
-
-		// start loading
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
 		getLoaderManager().initLoader(0, null, this).forceLoad();
 	}
 	
@@ -58,8 +63,15 @@ public class AddFromTextFragment extends ListFragment implements
 	@Override
 	public void onLoadFinished(Loader<ArrayList<TextInfo>> arg0, 
 			ArrayList<TextInfo> results) {
-		adapter.setList(results);
-		setListShown(true);
+		adapter.clear();
+		adapter.addAll(results);
+		
+		// The list should now be shown.
+		if (isResumed()) {
+			setListShown(true);
+		} else {
+			setListShownNoAnimation(true);
+		}
 	}
 
 	@Override
@@ -77,10 +89,21 @@ public class AddFromTextFragment extends ListFragment implements
 		/* get TextInfo object represented by the list item */
 		TextInfo selectedText = (TextInfo) adapter.getItem(position);
 		
+		PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+		boolean isPhoneNum = false;
+		for( int i = 0; i < Const.COUNTRIES.length && !isPhoneNum; i++ )
+		{
+			isPhoneNum |= phoneUtil.isPossibleNumber(selectedText.getName(), 
+					Const.COUNTRIES[i]);
+		}
+		
 		/* check if the name is actually a number of the name of
 		 * a preexisting contact */
-		if( Util.isInteger(selectedText.getName()) ) {
-			queryCorrectContact(selectedText.getName(), selectedText.getMsg());
+		if( isPhoneNum ) {
+			//queryCorrectContact(selectedText.getName(), selectedText.getMsg());
+			AddFromTextDialog dialog = AddFromTextDialog.create(
+					selectedText.getName(), selectedText.getMsg());
+			dialog.show(getFragmentManager(), "add_from_text_dialog");
 		} else {
 			Util.toastMsg(getActivity(),"Contact already exists: "+
 						selectedText.getName());
@@ -114,14 +137,9 @@ public class AddFromTextFragment extends ListFragment implements
    	        					name, msg );
     	        		   /* try to send text and alert user
     	        		    * if we fail.    */
-    	        		   try {
-    	        			   Util.toastMsg(getActivity(), 
-   	        					"Added Contact: "+msg);
-    	        		   } catch(Exception e) {
-    	        			   Util.toastMsg(getActivity(),
-    	        					 "Failed to send name to" +
-    	        					   "new contact.");
-    	        		   }
+    	        		   Util.toastMsg(getActivity(), 
+    	        				   "Added Contact: "+msg);
+
     	        	   } catch(Exception e) {
     	        		   Util.toastMsg(getActivity(),
     	        				   "Failed to add contact.");

@@ -36,7 +36,7 @@ public class ViewRecentContactsFragment extends ListFragment implements
 	LoaderCallbacks<ArrayList<ContactInfo>>{
 
 	// adapter to hold contact info for recent contacts
-	ArrayAdapter<ContactInfo> adapter;
+	ContactAdapter adapter;
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -45,12 +45,15 @@ public class ViewRecentContactsFragment extends ListFragment implements
 		// show loading animation
 		setListShown(false);
 
-		adapter = new ArrayAdapter<ContactInfo>(getActivity(), 
-				R.layout.list_item);
+		adapter = new ContactAdapter(getActivity());
 		setListAdapter( adapter );
-
-		// start the async load of contacts
-		getLoaderManager().initLoader(0, null, this).forceLoad();
+		getListView().setSelector(android.R.color.transparent);
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		getLoaderManager().initLoader(0, null, this).forceLoad();		
 	}
 	
 	/**
@@ -60,18 +63,21 @@ public class ViewRecentContactsFragment extends ListFragment implements
     public void onListItemClick(ListView l, View v, int position, long id) {
         // Insert desired behavior here.
         Log.i("FragmentComplexList", "Item clicked: " + id);
-        ContactInfo info = adapter.getItem(position);
+
+        //adapter.handleClick(v);
         
-		/* use the key to launch contact lookup activity */
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		Uri uri = Uri.withAppendedPath(
-				ContactsContract.Contacts.
-				CONTENT_LOOKUP_URI, info.lookup);
-		intent.setData(uri);
-		
-		// start for result so we can reload page on return in case
-		// the list is altered (ie contact deletion)
-		startActivityForResult(intent, 1);
+//        ContactInfo info = adapter.getItem(position);
+//        
+//		/* use the key to launch contact lookup activity */
+//		Intent intent = new Intent(Intent.ACTION_VIEW);
+//		Uri uri = Uri.withAppendedPath(
+//				ContactsContract.Contacts.
+//				CONTENT_LOOKUP_URI, info.lookup);
+//		intent.setData(uri);
+//		
+//		// start for result so we can reload page on return in case
+//		// the list is altered (ie contact deletion)
+//		startActivityForResult(intent, 1);
     }
 
     /**

@@ -1,3 +1,9 @@
-# cache for current jar dependecy. DO NOT EDIT.
+# cache for current jar dependency. DO NOT EDIT.
 # format is <lastModified> <length> <SHA-1> <path>
 # Encoding is UTF-8
+1387742433613 17262 ce073b5e6878d7d6e71f9b3d5ac5fda9459ce28b C:\Users\Matthew\Documents\android-workspace\DBTools\libs\lombok-api.jar
+1387742433613 17262 ce073b5e6878d7d6e71f9b3d5ac5fda9459ce28b C:\Users\Matthew\git\dossier\Dossier\libs\lombok-api.jar
+1366944181973 208983 64b2975dfd3f19a381e4d0f8da8a79677cb40f8e C:\Users\Matthew\git\add-contact-refactor\AddContact-Refactor\libs\libphonenumber-5.4.jar
+1366944181973 208983 64b2975dfd3f19a381e4d0f8da8a79677cb40f8e C:\Users\Matthew\git\dossier\Dossier\libs\libphonenumber-5.4.jar
+1387998565021 621451 5896b0a4e377ac4242eb2bc785220c1c4fc052f4 C:\Users\Matthew\Documents\android-workspace\DBTools\libs\android-support-v4.jar
+1387998565021 621451 5896b0a4e377ac4242eb2bc785220c1c4fc052f4 C:\Users\Matthew\git\add-contact-refactor\AddContact-Refactor\libs\android-support-v4.jar

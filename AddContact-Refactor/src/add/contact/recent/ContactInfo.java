@@ -8,16 +8,22 @@ package add.contact.recent;
  */
 public class ContactInfo {
 	// the index in most-recently-added order
-	int index;
+	final int index;
+	// row id
+	final long id;
 	// contacts name
-	String name;
+	final String name;
 	// lookup key to look up a contact and launch the contact activity
-	String lookup;
+	final String lookup;
+	// string to lookup photo
+	final String photoUri;
 	
-	public ContactInfo(String n, String l, int index) {
-		name = n;
-		lookup = l;
+	public ContactInfo(String n, String l, long id, String photo, int index) {
+		this.name = n;
+		this.lookup = l;
+		this.id = id;
 		this.index = index;
+		this.photoUri = photo;
 	}
 	
 	/**

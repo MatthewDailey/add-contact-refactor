@@ -42,15 +42,19 @@ public class LoadTexts extends AsyncTaskLoader<ArrayList<TextInfo>> {
 		int cnt = 0;
 		while( c.moveToNext() && cnt < 50)
 		{
-			TextInfo ti = new TextInfo();
-			/* get the address which is the phone number then getName() to
-			 * try to load the actual name of that contact if it exists 
-			 * already */
-			ti.setName(Util.getNameFromNumber(c.getString(c.getColumnIndex("address")), cr));
-			/* simply load the body of the text */
-			ti.setMsg(c.getString(c.getColumnIndex("body")));
-			recentTexts.add(ti);
-			cnt++;
+			try {
+				TextInfo ti = new TextInfo();
+				/* get the address which is the phone number then getName() to
+				 * try to load the actual name of that contact if it exists 
+				 * already */
+				ti.setName(Util.getNameFromNumber(c.getString(c.getColumnIndex("address")), cr));
+				/* simply load the body of the text */
+				ti.setMsg(c.getString(c.getColumnIndex("body")));
+				recentTexts.add(ti);
+				cnt++;
+			} catch (Exception e) {
+				// Continue and do nothing. Text won't load but app won't crash.
+			}
 		}
 		
 		return recentTexts;

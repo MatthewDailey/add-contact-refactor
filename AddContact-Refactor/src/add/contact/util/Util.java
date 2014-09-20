@@ -85,22 +85,26 @@ public class Util
         	/* get the cursor for query */
         	Cursor c = cr.query(uri, projection, null, null, null);
         	
-        	while( c.moveToNext() ){
-	        	for( String s : c.getColumnNames()){
-	        		System.out.println(s + " : " + c.getString(c.getColumnIndex(s)));
-	        	}
-        	}
-        	
         	/* retreive the name */
         	try {
+            	while( c.moveToNext() ){
+    	        	for( String s : c.getColumnNames()){
+    	        		System.out.println(s + " : " + c.getString(c.getColumnIndex(s)));
+    	        	}
+            	}
+        		
         		if( c.moveToFirst() ){
         			result = c.getString(
         					c.getColumnIndex(
         					ContactsContract.Contacts.DISPLAY_NAME));
         		}
+        	} catch (Exception e) {
+        		return null;
         	}
         	finally {
-        		c.close();
+        		if (c != null) {
+        			c.close();
+        		}
         	}
     	} 
     	
@@ -129,7 +133,7 @@ public class Util
 		try
 		{
 			/* check the first contact in the cursor, if none, return input. */ 
-			if(c.moveToFirst())
+			if(c != null && c.moveToFirst())
 			{
 				return c.getString(c.getColumnIndex(
 						ContactsContract.PhoneLookup.DISPLAY_NAME));
@@ -139,9 +143,14 @@ public class Util
 				return number;
 			}
 		}
+		catch (Exception e) {
+			return number;
+		}
 		finally
 		{
-			c.close();
+			if (c != null) {
+				c.close();
+			}
 		}
 	}
     
@@ -218,9 +227,6 @@ public class Util
      */
     public static void addContact(Activity a, String phone, String name)
     {
-    	/* correct caps */
-    	name = capitalizeName(name);
-    	
     	/* get the account and group info */
     	String[] acct_info = getVisibleAccount(a.getContentResolver());
     	String group_id = acct_info[0];
