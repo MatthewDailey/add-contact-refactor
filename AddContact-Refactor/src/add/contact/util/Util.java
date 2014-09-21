@@ -302,31 +302,6 @@ public class Util
     }
     
     /**
-     * capitalize the first letter in each word in a persons name.
-     * 
-     * @param name the name the be capitalized
-     * @return a correctly capitalized version of the the name. 
-     */
-    private static String capitalizeName( String name ) 
-    {
-    	/* split the input on white space */
-    	String[] words = name.split("\\s+");
-    	
-    	/* build the string */
-    	StringBuilder sb = new StringBuilder();
-    	for( String word : words)
-    	{
-    		sb.append(Character.toUpperCase(word.charAt(0)))
-    	        .append( word.substring(1).toLowerCase() );
-    		
-    		sb.append(" ");
-    	}
-    	
-    	/* return the string, trim trailing white space. */
-    	return sb.toString().trim();
-    }
-    
-    /**
      * Pop up a toast message from an activity.
      * @param a - the calling activity.
      * @param txt - the text of the toast message.
