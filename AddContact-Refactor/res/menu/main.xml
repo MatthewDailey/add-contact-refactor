@@ -1,9 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     
     <item android:id="@+id/setname" 
-        android:icon="@drawable/ic_menu_set_name" 
-        android:showAsAction="always"
-        android:title="Set Name"
+        android:icon="@drawable/ic_action_set_name" 
+        android:showAsAction="never"
+        android:title="Set Name To Send"
         />
+    <item android:id="@+id/action_dossier"
+        android:icon="@drawable/dossier_icon"
+        android:showAsAction="always"
+        android:title="Open Dossier"/>
     
 </menu>
