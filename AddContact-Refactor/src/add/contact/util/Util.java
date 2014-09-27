@@ -11,9 +11,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.GroupMembership;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Data;
-import android.provider.ContactsContract.CommonDataKinds.GroupMembership;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -291,7 +291,7 @@ public class Util
         	for(ContentProviderResult cpr : results ){
         		Log.i("Writing Contact", cpr.toString());
         	}
-        	toastMsg(a, "Added contact: "+name);
+        	toastMsg(a, "Added contact: " + name);
         } 
         catch (Exception e) 
         {
