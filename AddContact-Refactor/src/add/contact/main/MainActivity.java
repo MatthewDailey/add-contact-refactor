@@ -3,20 +3,17 @@ package add.contact.main;
 
 import add.contact.R;
 import add.contact.dialpad.SetName;
+import add.contact.dossier.DossierDialogFragment;
+import add.contact.util.Const;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.MenuItem.OnMenuItemClickListener;
-import android.widget.TextView;
 
 /**
  * Main activity of the app which holds the 3 main action fragments.
@@ -106,6 +103,21 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				return true;
 			}
     	});
+        MenuItem addItem = menu.findItem(R.id.action_dossier);
+        addItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				try {
+					Intent LaunchIntent = getPackageManager()
+							.getLaunchIntentForPackage(Const.DOSSIER_PACKAGE);
+					startActivity(LaunchIntent);
+				} catch (Exception e){
+					DossierDialogFragment dialog = new DossierDialogFragment();
+					dialog.show(getFragmentManager(), Const.DOSSIER_PACKAGE);
+				}
+				return false;
+			}
+        });
         return true;
     }
     

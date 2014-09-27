@@ -14,6 +14,8 @@ public class Const {
 	 * for handling SMS message so this may not be correct. 	 */
 	public static final Uri SMS_LOCATION = Uri.parse("content://sms");
 	
+	public static final String DOSSIER_PACKAGE = "basic.dossier";
+	
 	
 	public static final String[] COUNTRIES = new String[]{"US","GB","IN","DE","CA","ZA","NL","LB","AT",
 		"AF","AX","AL","DZ","AS","AD","AO","AI","AQ","AG"
