@@ -14,6 +14,8 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Main activity of the app which holds the 3 main action fragments.
@@ -48,6 +50,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main); 
 
         // Set up the action bar.
