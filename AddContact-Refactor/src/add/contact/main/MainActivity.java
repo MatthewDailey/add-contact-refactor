@@ -30,6 +30,7 @@ import io.fabric.sdk.android.Fabric;
  * 
  * @author Matthew
  */
+@SuppressWarnings("deprecation")
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
     /**
