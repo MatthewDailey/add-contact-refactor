@@ -96,11 +96,13 @@ public class ContactAdapter extends ArrayAdapter<ContactInfo> {
 	}
 	
     private Bitmap loadContactPhoto(ContentResolver cr, Uri uri) {
-        InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(cr, uri);
-        if (input == null) {
-            return null;
-        }
-        return BitmapFactory.decodeStream(input);
+    	try {
+    		InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(cr, uri);
+    		return BitmapFactory.decodeStream(input);
+    	} catch (Exception e) {
+    		// Error loading image, choose the default.
+    		return null;
+    	}
     }
 	
 }
