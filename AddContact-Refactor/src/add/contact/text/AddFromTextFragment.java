@@ -2,19 +2,16 @@ package add.contact.text;
 
 import java.util.ArrayList;
 
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import add.contact.text.LoadTexts;
 import add.contact.util.Const;
 import add.contact.util.Util;
+import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ListView;
+
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
 /**
  * Fragment view for adding a new contact from a recent text message. The
@@ -110,56 +107,5 @@ public class AddFromTextFragment extends ListFragment implements
 		}
 		
 	}  
-	
-   	/**
-	 * method to double check that the user selected the desired 
-	 * text.
-	 */
-    private void queryCorrectContact(final String name,	final String msg) {
-    	/* create an alert dialog */
-    	AlertDialog.Builder builder = new AlertDialog.
-    			Builder(getActivity());
-    	
-    	/* build the alert */
-    	builder.setMessage("Add contact "+ msg +"?")
-    	       .setCancelable(false)
-    	       /* yes-button code */
-    	       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-    	    	   /* user selected the correct contact so we
-    	    	    * add the contact and pop a toast message.
-    	    	    * then close the activity.
-    	    	    */
-    	           public void onClick(DialogInterface dialog, int id) {
-    	        	   /* try to add contact and alert user if 
-    	        	    * we fail with runtime. */
-    	        	   try {
-    	        		   Util.addContact(getActivity(), 
-   	        					name, msg );
-    	        		   /* try to send text and alert user
-    	        		    * if we fail.    */
-    	        		   Util.toastMsg(getActivity(), 
-    	        				   "Added Contact: "+msg);
 
-    	        	   } catch(Exception e) {
-    	        		   Util.toastMsg(getActivity(),
-    	        				   "Failed to add contact.");
-    	        	   }
-    	        	   getActivity().finish();
-    	        	   dialog.cancel();
-    	           }
-    	       })
-    	       /* no-button code */
-    	       .setNegativeButton("No", new DialogInterface.
-    	    		   OnClickListener() {
-    	           public void onClick(DialogInterface dialog, int id) {
-    	        	   /* change the button back to off and leave 
-    	        	    * dialog */
-    	                dialog.cancel();
-    	           }
-    	       });
-    	
-    	/* Build the alert and show it */
-    	AlertDialog alert = builder.create();
-    	alert.show();
-    }
 }

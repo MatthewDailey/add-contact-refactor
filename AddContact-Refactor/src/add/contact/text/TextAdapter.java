@@ -1,7 +1,7 @@
 package add.contact.text;
 
 import add.contact.R;
-import add.contact.text.CustomTextBaseAdapter.ViewHolder;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,12 +18,12 @@ public class TextAdapter extends ArrayAdapter<TextInfo> {
 		mInflater = LayoutInflater.from(context);
 	}
 	
-	class ViewHolder 
-	{
+	class ViewHolder {
 		TextView txtName;
     	TextView txtPhone;
 	}
 	
+	@SuppressLint("InflateParams")
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder;
     	if (convertView == null) {
@@ -34,8 +34,7 @@ public class TextAdapter extends ArrayAdapter<TextInfo> {
 
     	    convertView.setTag(holder);
     	} 
-    	else 
-    	{
+    	else {
     		holder = (ViewHolder) convertView.getTag();
     	}
     	

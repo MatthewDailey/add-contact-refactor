@@ -3,8 +3,12 @@ package add.contact.recent;
 import java.io.InputStream;
 
 import add.contact.R;
+import add.contact.util.Util;
+import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -12,6 +16,7 @@ import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.QuickContactBadge;
@@ -33,13 +38,14 @@ public class ContactAdapter extends ArrayAdapter<ContactInfo> {
 		QuickContactBadge quickContact;
 	}
 	
+	@SuppressLint("InflateParams")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		ViewHolder holder;
-		ContactInfo info = getItem(position);
+		final ViewHolder holder;
+		final ContactInfo info = getItem(position);
 		
 		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.contact_list_item, null);
+			convertView = inflater.inflate(R.layout.contact_list_item, null /* do not attach */);
 			holder = new ViewHolder();
 			holder.displayName = (TextView) convertView.findViewById(
 					R.id.displayname);
@@ -65,12 +71,28 @@ public class ContactAdapter extends ArrayAdapter<ContactInfo> {
 					context.getResources(), R.drawable.ic_action_happy));
 		}
 		
+		holder.quickContact.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				try {
+					try {
+						holder.quickContact.onClick(v);
+					} catch (ActivityNotFoundException e) {
+						// If quick contact fails, try the whole contact page.
+						Intent intent = new Intent(Intent.ACTION_VIEW);
+						Uri uri = Uri.withAppendedPath(
+								ContactsContract.Contacts.
+								CONTENT_LOOKUP_URI, info.lookup);
+						intent.setData(uri);
+						context.startActivity(intent);
+					}
+				} catch (Exception e) {
+					Util.toastMsg(context, "Sorry! Unable to load your contact.");
+				}
+			}
+		});
+		
 		return convertView;
-	}
-	
-	public void handleClick(View clickedView) {
-		ViewHolder holder = (ViewHolder) clickedView.getTag();
-		holder.quickContact.onClick(holder.quickContact);
 	}
 	
     private Bitmap loadContactPhoto(ContentResolver cr, Uri uri) {
