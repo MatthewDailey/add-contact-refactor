@@ -33,28 +33,33 @@ public class LoadTexts extends AsyncTaskLoader<ArrayList<TextInfo>> {
 		/* project over relevant columns of hte table */
 		String[] projection = {"body", "address", "date" };
 		/* query to get cursor over the resulting rows */
-		Cursor c = cr.query(Const.SMS_LOCATION, projection, mask, null, sortOrder);
-		
-		ArrayList<TextInfo> recentTexts = new ArrayList<TextInfo>(); 
 
-		/* add at most 50 most recent text messages and create TextInfo
-		 * objects out of them to return.  */
-		int cnt = 0;
-		while( c.moveToNext() && cnt < 50)
-		{
-			try {
-				TextInfo ti = new TextInfo();
-				/* get the address which is the phone number then getName() to
-				 * try to load the actual name of that contact if it exists 
-				 * already */
-				ti.setName(Util.getNameFromNumber(c.getString(c.getColumnIndex("address")), cr));
-				/* simply load the body of the text */
-				ti.setMsg(c.getString(c.getColumnIndex("body")));
-				recentTexts.add(ti);
-				cnt++;
-			} catch (Exception e) {
-				// Continue and do nothing. Text won't load but app won't crash.
+		ArrayList<TextInfo> recentTexts = new ArrayList<TextInfo>(); 
+		
+		try {
+			Cursor c = cr.query(Const.SMS_LOCATION, projection, mask, null, sortOrder);
+	
+			/* add at most 50 most recent text messages and create TextInfo
+			 * objects out of them to return.  */
+			int cnt = 0;
+			while( c.moveToNext() && cnt < 50)
+			{
+				try {
+					TextInfo ti = new TextInfo();
+					/* get the address which is the phone number then getName() to
+					 * try to load the actual name of that contact if it exists 
+					 * already */
+					ti.setName(Util.getNameFromNumber(c.getString(c.getColumnIndex("address")), cr));
+					/* simply load the body of the text */
+					ti.setMsg(c.getString(c.getColumnIndex("body")));
+					recentTexts.add(ti);
+					cnt++;
+				} catch (Exception e) {
+					// Continue and do nothing. Text won't load but app won't crash.
+				}
 			}
+		} catch (Exception e) {
+			// Do nothing.
 		}
 		
 		return recentTexts;
